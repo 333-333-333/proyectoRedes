@@ -14,11 +14,10 @@ public class MainGUI extends GUIFactory {
 
     public MainGUI() {
         super(1280, 720);
-        this.setVisible(true);
+        setVisible(true);
         loadElements();
         asignElements();
         viewPanel();
-
     }
 
     protected void loadButton() {
@@ -26,18 +25,19 @@ public class MainGUI extends GUIFactory {
     }
 
     protected void loadTextField() {
-        this.UserField = createTextField(200, 200,
+        UserField = createTextField(200, 200,
                 325, 25);
-        this.PasswordField = createTextField(200, 300,
+
+        PasswordField = createTextField(200, 300,
                 325, 25);
     }
 
     private void cargarBotonesPanelPrincipal() {
-        this.Login = createButton(200, 500,
+        Login = createButton(200, 500,
                 150, 25,
                 "Iniciar sesión");
 
-        this.Register = createButton(375, 500,
+        Register = createButton(375, 500,
                 150, 25,
                 "Registrarse");
     }
@@ -52,7 +52,7 @@ public class MainGUI extends GUIFactory {
     }
 
     private void cargarPanelPrincipal() {
-        this.MainPane = createPanel(0, 100,
+        MainPane = createPanel(0, 100,
                 1280, 620);
     }
 
@@ -68,12 +68,11 @@ public class MainGUI extends GUIFactory {
     }
 
     private void asignarAPanelPrincipal() {
-        this.MainPane.add(this.UserField);
-        this.MainPane.add(this.PasswordField);
+        MainPane.add(this.UserField);
+        MainPane.add(this.PasswordField);
 
-        this.MainPane.add(this.Login);
-        this.MainPane.add(this.Register);
-
+        MainPane.add(this.Login);
+        MainPane.add(this.Register);
 
     }
 
@@ -82,16 +81,47 @@ public class MainGUI extends GUIFactory {
     }
 
     public void setActionListener(ActionListener a) {
-        this.Login.addActionListener(a);
-        this.Register.addActionListener(a);
+        Login.addActionListener(a);
+        Register.addActionListener(a);
     }
 
-    public JButton getRegister() {
-        return this.Register;
+    public JPanel getMainPane() {
+        return MainPane;
+    }
+
+    public void setMainPane(JPanel mainPane) {
+        MainPane = mainPane;
     }
 
     public JButton getLogin() {
-        return this.Login;
+        return Login;
     }
 
+    public void setLogin(JButton login) {
+        Login = login;
+    }
+
+    public JButton getRegister() {
+        return Register;
+    }
+
+    public void setRegister(JButton register) {
+        Register = register;
+    }
+
+    public JTextField getUserField() {
+        return UserField;
+    }
+
+    public void setUserField(JTextField userField) {
+        UserField = userField;
+    }
+
+    public JTextField getPasswordField() {
+        return PasswordField;
+    }
+
+    public void setPasswordField(JTextField passwordField) {
+        PasswordField = passwordField;
+    }
 }

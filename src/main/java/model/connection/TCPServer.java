@@ -9,7 +9,7 @@ public class TCPServer {
 
     private boolean IsOpen;
     private final int PORT = 33333;
-    private final ServerSocket Socket;
+    private ServerSocket Socket;
     private Socket ClientSocket;
 
     public TCPServer() {

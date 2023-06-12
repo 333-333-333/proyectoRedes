@@ -11,6 +11,8 @@ import static javax.swing.SwingConstants.CENTER;
 
 public abstract class GUIFactory extends JFrame {
 
+    // Given width and length (On pixels), the constructor will create a blank
+    // window with the given dimentions.
     protected GUIFactory(int width, int length) {
         dimention(width, length);
         decorate();
@@ -131,22 +133,37 @@ public abstract class GUIFactory extends JFrame {
                                        int x, int y,
                                        int width, int length) {
         JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/html");
         textPane.setText(text);
         textPane.setEditable(false);
         textPane.setBounds(x, y,
                 width, length);
-        textPane.setOpaque(false);
-
-        Font usedFont = new Font("Arial", 1, 20);
-        textPane.setFont(usedFont);
-        textPane.setForeground(Color.WHITE);
-
-        StyledDocument doc = textPane.getStyledDocument();
-        SimpleAttributeSet center = new SimpleAttributeSet();
-        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-        doc.setParagraphAttributes(0, doc.getLength(), center, false);
+        textPane.setOpaque(true);
 
         return textPane;
+    }
+
+    protected JTextArea createTextArea(String text,
+                                       int x, int y,
+                                       int width, int length) {
+        JTextArea textArea = new JTextArea();
+        textArea.setText(text);
+        textArea.setBounds(x, y, width, length);
+        textArea.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setEditable(false);
+        textArea.setOpaque(true);
+
+        return textArea;
+    }
+
+    protected JScrollPane createScrollPane(int x, int y,
+                                           int width, int length){
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(x, y, width, length);
+        scrollPane.setVisible(true);
+        return scrollPane;
     }
 
 }

