@@ -1,5 +1,7 @@
 package controller;
 
+import model.connection.HalfManClient;
+import model.connection.HalfManServer;
 import model.connection.TCPClient;
 import model.connection.UDPClient;
 import view.ClientGUI;
@@ -11,17 +13,35 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.SocketException;
-
 public class ClientController {
     private TCPClient TCPClient;
     private UDPClient UDPClient;
     private ClientGUI GUI;
+    private String ServerIP;
+    private boolean IsConnected;
 
-    public ClientController() throws SocketException {
-        this.TCPClient = new TCPClient();
-        this.UDPClient = new UDPClient();
+    public ClientController() throws IOException {
         GUI = new ClientGUI();
+        IsConnected = false;
+        stablishConnection();
+    }
+
+    private void stablishConnection() throws IOException {
+        HalfManClient.sendClientIP();
+        while(!IsConnected) {
+            try {
+                IsConnected = HalfManClient.hasLink();
+                System.out.println(IsConnected);
+                if (IsConnected) {
+                    ServerIP = HalfManClient.getServerIP();
+                    TCPClient = new TCPClient(ServerIP);
+                    UDPClient = new UDPClient();
+                }
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("Runtime problem (!)");
+            }
+        }
     }
 
     public void run() {

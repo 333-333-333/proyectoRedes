@@ -8,10 +8,12 @@ public class UDPServer {
     private final int PORT = 33333;
     private DatagramSocket Socket;
     private InetAddress Reciever;
+    private String ClientIP;
 
-    public UDPServer() throws SocketException,  UnknownHostException {
+    public UDPServer(String clientIP) throws IOException {
         Socket = new DatagramSocket();
-        Reciever = InetAddress.getByName("localhost");
+        ClientIP = clientIP;
+        Reciever = InetAddress.getByName(ClientIP);
     }
 
     private DatagramPacket byteDatagram(byte[] data) {

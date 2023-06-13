@@ -1,9 +1,9 @@
 import controller.ClientController;
 
-import java.net.SocketException;
+import java.io.IOException;
 
 public class ClientApp {
-    public static void main(String[] args) throws SocketException {
+    public static void main(String[] args) throws IOException {
         ClientController l = new ClientController();
         l.run();
     }

@@ -1,11 +1,10 @@
 import model.program.DataStreamer;
 
 import java.awt.*;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.io.IOException;
 
 public class ServerApp {
-    public static void main(String[] args) throws SocketException, UnknownHostException, AWTException {
+    public static void main(String[] args) throws IOException, AWTException {
         DataStreamer streamer = new DataStreamer();
         streamer.run();
     }
