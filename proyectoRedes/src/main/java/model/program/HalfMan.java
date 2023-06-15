@@ -13,9 +13,10 @@ public class HalfMan {
 
 
     // Both booleans are used for getting the link state between both.
-    private boolean ClientConnected, ServerConnected;
+    private boolean ClientConnected, ServerConnected, ConnectionStablished;
     // Both client and server IP.
-    private String ClientIP, ServerIP;
+    private String ClientIP, ServerIP,
+            SessionName, Password;
     // Local receptor.
     private ServerSocket Socket;
     // HalfMan's server port.
@@ -41,25 +42,66 @@ public class HalfMan {
         Socket localSocket = Socket.accept();
         DataInputStream streamer = new DataInputStream(
                 localSocket.getInputStream());
-        ServerIP = streamer.readUTF();
+        String serverData = streamer.readUTF();
+
+        setServerData(serverData);
+
         streamer.close();
 
         System.out.println("Done! (" + ServerIP + ")");
         ServerConnected = true;
     }
 
+    private void setServerData(String serverData) {
+        String[] data = serverData.split(";");
+
+        ServerIP = data[0];
+        SessionName = data[1];
+        Password = data[2];
+    }
+
     // Receives client IP.
-    public void connectClient() throws IOException {
+    private void connectClient() throws IOException {
         System.out.println("Getting client IP...");
 
         Socket localSocket = Socket.accept();
         DataInputStream streamer = new DataInputStream(
                 localSocket.getInputStream());
-        ClientIP = streamer.readUTF();
+        String clientData = streamer.readUTF();
+
+        setClientData(clientData);
+
         streamer.close();
 
-        System.out.println("Done! (" + ClientIP + ")");
-        ClientConnected = true;
+        if (ConnectionStablished) {
+            System.out.println("Done! (" + ClientIP + ")");
+            ClientConnected = true;
+            return;
+        }
+
+        System.out.println("Wrong credentials!");
+    }
+
+    private void setClientData(String clientData) {
+        String[] data = clientData.split(";");
+
+        String clientIP = data[0];
+        String sessionName = data[1];
+        String password = data[2];
+
+        checkCredentials(clientIP, sessionName, password);
+    }
+
+    private void checkCredentials(String clientIP,
+                                  String sessionName,
+                                  String password) {
+        if(sessionName.equals(SessionName) && password.equals(Password)) {
+            ClientIP = clientIP;
+            ConnectionStablished = true;
+            return;
+        }
+
+        ConnectionStablished = false;
     }
 
     // Once gotten server IP, tries to send it to client.
@@ -88,7 +130,7 @@ public class HalfMan {
         System.out.println("Sent!");
     }
 
-    // Gets link state (It's the client and server connected?) ti ckuebt.
+    // Gets link state (It's the client and server connected?) to client.
     public void getClientLinkStateClient() throws IOException {
         System.out.println("Sending link state to client...");
 
@@ -118,6 +160,20 @@ public class HalfMan {
         System.out.println("Sent!");
     }
 
+    private void sendCredentialsCheck() throws IOException {
+        System.out.println("Sending credentials check to client..");
+
+        Socket localSocket = new Socket(ClientIP, CLIENT_PORT);
+        DataOutputStream streamer = new DataOutputStream(
+                localSocket.getOutputStream());
+
+        String state = ConnectionStablished ? "1" : "0";
+        streamer.writeUTF(state);
+        streamer.close();
+
+        System.out.println("Sent!");
+    }
+
     // Listens the petitions for both server and client.
     public void listen() throws Exception {
         printLinkState();
@@ -135,6 +191,8 @@ public class HalfMan {
 
             case "5" -> getClientLinkStateClient();
             case "6" -> getServerLinkStateClient();
+
+            case "7" -> sendCredentialsCheck();
         }
 
         sleep(1000);

@@ -25,13 +25,18 @@ public class ClientController {
     private UDPClient UDPClient;
     // ClientGUI
     private ClientGUI GUI;
+    // For session purposes.
+    private String SessionName, Password;
     // For starting connection.
     private boolean IsConnected;
 
 
 
     // Constructor.
-    public ClientController() throws IOException {
+    public ClientController(String sessionName, String password)
+            throws IOException {
+        SessionName = sessionName;
+        Password = password;
         GUI = new ClientGUI();
         IsConnected = false;
         stablishConnection();
@@ -41,9 +46,10 @@ public class ClientController {
 
     // Tries to stablish connection to server.
     private void stablishConnection() throws IOException {
-        HalfManClient.sendClientIP();
+        HalfManClient.sendClientData(SessionName, Password);
 
-        while(!IsConnected) {
+        if(HalfManClient.checkCredentials()) {
+            while (!IsConnected) {
                 IsConnected = HalfManClient.hasLink();
                 System.out.println("Link state : " + IsConnected);
 
@@ -51,6 +57,11 @@ public class ClientController {
                     TCPClient = new TCPClient();
                     UDPClient = new UDPClient();
                 }
+            }
+
+            run();
+        } else {
+            System.exit(0);
         }
     }
 

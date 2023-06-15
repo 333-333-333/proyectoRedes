@@ -28,27 +28,34 @@ public class HalfManClient {
 
 
 
-    // Once gotten the machine IP, it has to arrive to HalfMan.
-    public static void sendClientIP() throws IOException {
-        askRecieptClientIP();
-        String serverIP = getClientIP();
-        Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
-        DataOutputStream stream = new DataOutputStream(
-                halfmanSocket.getOutputStream());
-        stream.writeUTF(serverIP);
-        stream.close();
-        halfmanSocket.close();
-    }
-
     // Local machine's IP.
     public static String getClientIP() throws UnknownHostException {
         InetAddress inetAddress = InetAddress.getLocalHost();
         return inetAddress.getHostAddress();
     }
 
+    // Once gotten the machine IP, it has to arrive to HalfMan.
+    public static void sendClientData(String sessionName, String password)
+            throws IOException {
+        askRecieptClientData();
+
+        String clientIP = getClientIP();
+        String clientData = clientIP + ";" +
+                            sessionName + ";" +
+                            password;
+
+        Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
+        DataOutputStream stream = new DataOutputStream(
+                halfmanSocket.getOutputStream());
+        stream.writeUTF(clientData);
+
+        stream.close();
+        halfmanSocket.close();
+    }
+
     // Warns HalfMan that the next thing he's going to recieve is client's
     // IP address.
-    private static void askRecieptClientIP() throws IOException {
+    private static void askRecieptClientData() throws IOException {
         Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
         DataOutputStream stream = new DataOutputStream(
                 halfmanSocket.getOutputStream());
@@ -87,6 +94,36 @@ public class HalfManClient {
         boolean hasLink = linkState.equals("1");
         System.out.println("Link state catched!  (" + hasLink + ")");
         return hasLink;
+    }
+
+    public static boolean checkCredentials() throws IOException {
+        System.out.println("Asking HalfMan to check credentials...");
+        askStreamCredentialsCheck();
+        return catchCredentialsCheck();
+    }
+
+    private static void askStreamCredentialsCheck() throws IOException {
+        Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
+        DataOutputStream stream = new DataOutputStream(
+                halfmanSocket.getOutputStream());
+        stream.writeUTF("7");
+        stream.close();
+        halfmanSocket.close();
+    }
+
+    public static boolean catchCredentialsCheck() throws IOException {
+        ServerSocket localServerSocket = new ServerSocket(CLIENT_PORT);
+        Socket localSocket = localServerSocket.accept();
+
+        DataInputStream streamer = new DataInputStream(
+                localSocket.getInputStream());
+        localServerSocket.close();
+        String linkState = streamer.readUTF();
+
+        boolean credentialsCheck = linkState.equals("1");
+        System.out.println("Credentials check catched!  ("
+                + credentialsCheck + ")");
+        return credentialsCheck;
     }
 
 }

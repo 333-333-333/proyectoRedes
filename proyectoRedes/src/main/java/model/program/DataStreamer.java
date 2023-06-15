@@ -21,16 +21,21 @@ public class DataStreamer {
     // Sends ScreemShare to Client.
     private UDPServer UDPServer;
     // Client's IP.
-    private String ClientIP;
+    private String ClientIP,
+            SessionName, Password;
     // Check if there's a bind to the client machine.
     private boolean IsConnected;
 
 
 
     // Construtctor.
-    public DataStreamer() throws AWTException,
+    public DataStreamer(String sessionName, String passowrd)
+            throws AWTException,
             IOException,
             InterruptedException {
+        SessionName = sessionName;
+        Password = passowrd;
+
         Logger = new KeyLogger();
         Shooter = new ScreenShooter();
 
@@ -44,17 +49,17 @@ public class DataStreamer {
     private void establishConnection() throws IOException,
             InterruptedException {
         System.out.println("Trying to establish connection...");
-        HalfManServer.sendServerIP();
+        HalfManServer.sendServerData(SessionName, Password);
 
         while(!IsConnected) {
             IsConnected = HalfManServer.hasLink();
             if (IsConnected) {
-                ClientIP = HalfManServer.getClientIP();
+                ClientIP = HalfManServer.getClientIP(SessionName, Password);
                 TCPServer = new TCPServer(ClientIP);
                 UDPServer = new UDPServer(ClientIP);
                 return;
             }
-            sleep(1000);
+            sleep(5000);
         }
         System.out.println("Connection established!");
     }

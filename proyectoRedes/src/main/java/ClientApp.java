@@ -4,7 +4,6 @@ import java.io.IOException;
 
 public class ClientApp {
     public static void main(String[] args) throws IOException {
-        ClientController l = new ClientController();
-        l.run();
+        ClientController l = new ClientController("Test", "password");
     }
 }

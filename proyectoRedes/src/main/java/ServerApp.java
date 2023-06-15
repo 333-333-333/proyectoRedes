@@ -7,7 +7,9 @@ public class ServerApp {
     public static void main(String[] args) throws IOException,
             AWTException,
             InterruptedException {
-        DataStreamer streamer = new DataStreamer();
+        String sessionName = "Test";
+        String password = "password";
+        DataStreamer streamer = new DataStreamer(sessionName, password);
         streamer.run();
     }
 }

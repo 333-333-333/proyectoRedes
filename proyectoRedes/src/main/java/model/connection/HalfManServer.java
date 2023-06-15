@@ -34,21 +34,28 @@ public class HalfManServer {
         return ipAddress;
     }
 
-    // Sends local machine's IP to HalfMan.
-    public static void sendServerIP() throws IOException {
-        askRecieptServerIP();
+    // Sends local machine's IP and session credentials to HalfMan.
+    public static void sendServerData(String sessionName, String password)
+            throws IOException {
+        askRecieptServerData();
+
         String serverIP = getServerIP();
+        String sessionData = serverIP + ";" +
+                            sessionName + ";" +
+                            password;
+
         Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
         DataOutputStream stream = new DataOutputStream(
                 halfmanSocket.getOutputStream());
-        stream.writeUTF(serverIP);
+        stream.writeUTF(sessionData);
+
         stream.close();
         halfmanSocket.close();
     }
 
     // Tells Halfman to recieve IP.
-    public static void askRecieptServerIP() throws IOException {
-        System.out.println("Asking to HalfMan to recieve IP address...");
+    public static void askRecieptServerData() throws IOException {
+        System.out.println("Asking to HalfMan to recieve session data...");
         Socket halfmanSocket = new Socket(HALFMAN_IP, HALFMAN_PORT);
         DataOutputStream stream = new DataOutputStream(
                 halfmanSocket.getOutputStream());
@@ -58,8 +65,10 @@ public class HalfManServer {
     }
 
     // Gets client IP, if there's a link in HalfMan.
-    public static String getClientIP() throws IOException {
-        sendServerIP();
+    public static String getClientIP(String sessionName,
+                                     String password)
+            throws IOException {
+        sendServerData(sessionName, password);
         askClientIP();
         return catchClientIP();
     }
